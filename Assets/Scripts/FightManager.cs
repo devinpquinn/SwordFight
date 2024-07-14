@@ -15,6 +15,9 @@ public class FightManager : MonoBehaviour
     public Image playerStaminaBar;
     public Image enemyStaminaBar;
 
+    private int position;
+    public Image[] trackMarkers = new Image[5];
+
     public Slider slider;
 
     private void Awake()
@@ -30,6 +33,7 @@ public class FightManager : MonoBehaviour
     public void Setup()
     {
         playerStamina = enemyStamina = maxStamina;
+        position = 3;
     }
 
     public void Constrain()
@@ -59,7 +63,9 @@ public class FightManager : MonoBehaviour
         if(playerSpent < 0 && enemySpent < 0)
         {
             //disengage
+            Debug.Log("DISENGAGE!");
             playerStamina = enemyStamina = maxStamina;
+            position = 3;
         }
         else
         {
@@ -85,15 +91,75 @@ public class FightManager : MonoBehaviour
                     enemyStamina++;
                 }
             }
+
+            if(playerSpent == enemySpent)
+            {
+                //clash
+                Debug.Log("CLASH!");
+
+                if(Random.Range(0, 2) == 1)
+                {
+                    //player wins clash
+                    playerSpent++;
+                }
+                else
+                {
+                    //enemy wins clash
+                    enemySpent++;
+                }
+            }
+            else
+            {
+                if(playerSpent > enemySpent)
+                {
+                    //player pushes back enemy
+                    position++;
+                }
+                else
+                {
+                    //enemy pushes back player
+                    position--;
+                }
+
+                //check for wound
+                if(position > 5)
+                {
+                    Debug.Log("ENEMY HIT!");
+                    playerStamina = enemyStamina = maxStamina;
+                    position = 3;
+                }
+                else if(position < 1)
+                {
+                    Debug.Log("PLAYER HIT!");
+                    playerStamina = enemyStamina = maxStamina;
+                    position = 3;
+                }
+            }
         }
 
         UpdateBars(playerStamina, enemyStamina);
+
+        UpdateTrack(position);
+
+        slider.value = -1;
     }
 
     public void UpdateBars(int playerAmt, int enemyAmt)
     {
         playerStaminaBar.fillAmount = (float) playerAmt / maxStamina;
         enemyStaminaBar.fillAmount = (float) enemyAmt / maxStamina;
+    }
+
+    public void UpdateTrack(int pos)
+    {
+        for(int i = 0; i < trackMarkers.Length; i++)
+        {
+            trackMarkers[i].color = new Color(0.2f, 0.2f, 0.2f);
+            if(pos - 1 == i)
+            {
+                trackMarkers[i].color = new Color(0.6f, 0.6f, 0.6f);
+            }
+        }
     }
 
     public int EnemyAction()
