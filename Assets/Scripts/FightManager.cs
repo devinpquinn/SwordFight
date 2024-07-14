@@ -22,6 +22,7 @@ public class FightManager : MonoBehaviour
     public Image[] trackMarkers = new Image[5];
 
     public Slider slider;
+    public TMPro.TextMeshProUGUI sliderLabel;
 
     private void Awake()
     {
@@ -45,6 +46,19 @@ public class FightManager : MonoBehaviour
         {
             slider.value = playerStamina;
         }
+
+        string result = "";
+
+        if (slider.value == -2)
+        {
+            result = "Defend";
+        }
+        else if(slider.value > -1)
+        {
+            result = slider.value.ToString();
+        }
+
+        sliderLabel.text = result;
     }
 
     public void Release()
