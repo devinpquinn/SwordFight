@@ -12,6 +12,9 @@ public class FightManager : MonoBehaviour
     private int playerStamina;
     private int enemyStamina;
 
+    public Image playerStaminaBar;
+    public Image enemyStaminaBar;
+
     public Slider slider;
 
     private void Awake()
@@ -49,8 +52,52 @@ public class FightManager : MonoBehaviour
         }
     }
 
-    public void Resolve(int spent)
+    public void Resolve(int playerSpent)
     {
-        Debug.Log(slider.value);
+        int enemySpent = EnemyAction();
+
+        if(playerSpent < 0 && enemySpent < 0)
+        {
+            //disengage
+            playerStamina = enemyStamina = maxStamina;
+        }
+        else
+        {
+            if (playerSpent > 0)
+            {
+                playerStamina -= playerSpent;
+            }
+            else if (playerSpent < 0)
+            {
+                if(playerStamina < maxStamina)
+                {
+                    playerStamina++;
+                }
+            }
+            if (enemySpent > 0)
+            {
+                enemyStamina -= enemySpent;
+            }
+            else if (enemySpent < 0)
+            {
+                if (enemyStamina < maxStamina)
+                {
+                    enemyStamina++;
+                }
+            }
+        }
+
+        UpdateBars(playerStamina, enemyStamina);
+    }
+
+    public void UpdateBars(int playerAmt, int enemyAmt)
+    {
+        playerStaminaBar.fillAmount = (float) playerAmt / maxStamina;
+        enemyStaminaBar.fillAmount = (float) enemyAmt / maxStamina;
+    }
+
+    public int EnemyAction()
+    {
+        return Random.Range(-2, enemyStamina);
     }
 }
