@@ -29,7 +29,27 @@ public class FightManager : MonoBehaviour
         playerStamina = enemyStamina = maxStamina;
     }
 
-    public void Resolve()
+    public void Constrain()
+    {
+        if(slider.value > playerStamina)
+        {
+            slider.value = playerStamina;
+        }
+    }
+
+    public void Release()
+    {
+        if(slider.value == -1)
+        {
+            //play a sound effect
+        }
+        else
+        {
+            Resolve((int)slider.value);
+        }
+    }
+
+    public void Resolve(int spent)
     {
         Debug.Log(slider.value);
     }
